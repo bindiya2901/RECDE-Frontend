@@ -29,7 +29,6 @@ export default function Dashboard() {
           users to write, edit, and sync documents instantly from anywhere.
         </p>
 
-        {/* ACTION BUTTONS */}
         <div className="mt-10 flex gap-6">
           <motion.button
             whileHover={{ scale: 1.08 }}
