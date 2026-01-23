@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
 import { socket } from "../socket";
 
 export default function Editor({ docId }) {
@@ -9,34 +7,56 @@ export default function Editor({ docId }) {
   useEffect(() => {
     socket.emit("join-document", docId);
 
-    socket.on("load-document", data => {
-      setContent(data);
-    });
-
     socket.on("receive-changes", data => {
-      setContent(data);
+      setContent(data || "");
     });
 
     return () => {
-      socket.off("load-document");
       socket.off("receive-changes");
     };
   }, [docId]);
 
-  const handleChange = value => {
-    setContent(value);
-    socket.emit("send-changes", {
-      docId,
-      content: value
+  useEffect(() => {
+    const handleMove = e => {
+      socket.emit("cursor-move", {
+        docId,
+        x: e.clientX,
+        y: e.clientY
+      });
+    };
+
+    window.addEventListener("mousemove", handleMove);
+
+    socket.on("cursor-update", () => {
+      // you can render cursor dots later
     });
+
+    return () => {
+      window.removeEventListener("mousemove", handleMove);
+      socket.off("cursor-update");
+    };
+  }, [docId]);
+
+  const handleChange = e => {
+    setContent(e.target.value);
+    socket.emit("send-changes", { docId, content: e.target.value });
   };
 
   return (
-    <ReactQuill
-      theme="snow"
-      value={content}
-      onChange={handleChange}
-      style={{ height: "100vh" }}
-    />
+    <div
+      className="min-h-screen p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-black"
+    >
+      <textarea
+        value={content}
+        onChange={handleChange}
+        placeholder="Start typing…"
+        className="w-full h-[90vh] rounded-2xl p-8 text-lg
+                   bg-black/40 backdrop-blur-xl
+                   border border-white/10
+                   text-white outline-none resize-none
+                   focus:ring-2 focus:ring-cyan-400
+                   shadow-xl"
+      />
+    </div>
   );
 }

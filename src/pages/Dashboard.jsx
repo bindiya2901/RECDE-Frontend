@@ -1,17 +1,15 @@
+import DocumentCard from "../components/DocumentCard";
 import { useNavigate } from "react-router-dom";
-import { v4 as uuid } from "uuid";
 
 export default function Dashboard() {
   const navigate = useNavigate();
 
-  const createDoc = () => {
-    navigate(`/doc/${uuid()}`);
-  };
-
   return (
-    <div style={{ padding: 40 }}>
-      <h1>RECDE Dashboard</h1>
-      <button onClick={createDoc}>➕ New Document</button>
+    <div className="pt-32 px-10 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <DocumentCard
+        title="New Document"
+        onOpen={() => navigate(`/doc/${crypto.randomUUID()}`)}
+      />
     </div>
   );
 }

@@ -1,16 +1,12 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
-import Document from "./pages/Document";
+import { useState } from "react";
+import Navbar from "./components/Navbar";
 
-function App() {
+export default function App() {
+  const [dark, setDark] = useState(true);
+
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/doc/:id" element={<Document />} />
-      </Routes>
-    </BrowserRouter>
+    <div className={dark ? "dark" : ""}>
+      <Navbar toggleTheme={() => setDark(!dark)} />
+    </div>
   );
 }
-
-export default App;
